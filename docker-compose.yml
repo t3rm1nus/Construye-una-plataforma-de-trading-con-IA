@@ -1,0 +1,26 @@
+services:
+  plataforma:
+    build: .
+    env_file:
+      - path: .env              # secretos fuera de la imagen (copia .env.example)
+        required: false
+    environment:
+      RUTA_BD: /app/datos/plataforma.db
+    volumes:
+      - datos:/app/datos
+    restart: on-failure
+
+  panel:
+    build: .
+    command: ["streamlit", "run", "panel.py", "--server.address=0.0.0.0"]
+    environment:
+      RUTA_BD: /app/datos/plataforma.db
+    ports:
+      - "127.0.0.1:8501:8501"   # solo accesible desde la propia máquina
+    volumes:
+      - datos:/app/datos
+    depends_on:
+      - plataforma
+
+volumes:
+  datos:
