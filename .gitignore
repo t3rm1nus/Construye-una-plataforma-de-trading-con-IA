@@ -1,4 +1,43 @@
+# Variables de entorno y credenciales
 .env
+.env.*
+!.env.example
+
+# Bases de datos
 *.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Entornos virtuales
+.venv/
+venv/
+venv*/
+ENV/
+env/
+
+# Logs
+*.log
+logs/
+
+# Empaquetado
+build/
+dist/
+*.egg-info/
+
+# IDE y sistema operativo
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

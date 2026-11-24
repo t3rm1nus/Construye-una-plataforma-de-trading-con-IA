@@ -1,7 +1,44 @@
+# Credenciales
 .env
-*.db
+.env.*
+!.env.example
+
+# Control de versiones
 .git
-__pycache__/
-.pytest_cache/
-tests/
+.gitignore
+
+# Python y entornos virtuales
+__pycache__
+**/__pycache__
+*.py[cod]
+.venv
+venv
+venv*/
+ENV
+env
+.pytest_cache
+.mypy_cache
+.ruff_cache
+
+# Bases de datos y logs locales
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.log
+logs
+
+# Empaquetado
+build
+dist
+*.egg-info
+
+# Entorno de desarrollo
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Tests y documentación no necesarios en la imagen
+tests
 README.md
