@@ -1,94 +1,265 @@
-# Construye una plataforma de trading con IA — repositorio del libro
+# Construye una plataforma de trading con IA
 
-Código de referencia del libro *Construye una plataforma de trading con IA: APIs de
-exchanges, ejecución automatizada y despliegue en producción* (Juan Antonio Charneco,
-2026, tercer libro de la serie sobre trading algorítmico con Python).
+Repositorio de código de referencia del libro *Construye una plataforma de trading con IA: APIs de exchanges, ejecución automatizada y despliegue en producción*, de Juan Antonio Charneco (2026), tercer libro de la serie sobre trading algorítmico con Python.
 
-El repositorio contiene exactamente los módulos impresos en la sección «Implementación de
-referencia» de cada capítulo, además de las pruebas (capítulo 13), el panel de control
-(capítulo 12) y los archivos de contenedores (capítulo 14). Está pensado para aprender y
-simular: **nunca envía órdenes reales**, no promete rentabilidad y no es asesoramiento
-financiero. Operar en los mercados implica riesgo de pérdida de capital.
+El proyecto reúne los módulos de implementación, la simulación, el panel de control, los ejemplos de integración y las pruebas automatizadas que acompañan al libro.
 
-## Estructura
+**Importante:** el programa principal ejecuta una simulación con un broker simulado. No envía órdenes reales a exchanges, no promete rentabilidad y no constituye asesoramiento financiero. Los mercados financieros implican riesgo de pérdida de capital. Los ejemplos de conexión con exchanges deben utilizarse únicamente en entornos de prueba (*testnet*) y con credenciales de prueba.
 
-```
-Construye_una_plataforma_de_trading_con_IA/
+## 1. Requisitos
+
+- Python 3.12.
+- pip.
+- Git, para clonar el repositorio.
+- Docker y Docker Compose, únicamente si se desea ejecutar el proyecto en contenedores.
+
+El proyecto se ha configurado para Python 3.12 y las dependencias directas están fijadas en `requirements.txt`.
+
+## 2. Estructura del repositorio
+
+```text
+Construye-una-plataforma-de-trading-con-IA/
+│
+├── .github/
+│   └── workflows/
+│       └── tests.yml
+│
 ├── plataforma/
-│   ├── arquitectura.py      (cap. 1)    ├── riesgo.py            (cap. 9)
-│   ├── firma.py             (cap. 2)    ├── almacen.py           (cap. 10)
-│   ├── streaming.py         (cap. 3)    ├── observabilidad.py    (cap. 11)
-│   ├── mercado.py           (cap. 4)    ├── conciliacion.py      (cap. 15)
-│   ├── cartera.py           (cap. 5)    ├── parada.py            (cap. 16)
-│   ├── ordenes.py           (cap. 6)    └── aceptacion.py        (cap. 17)
-│   ├── reintentos.py        (cap. 7)
-│   └── secretos.py          (cap. 8)
-├── tests/test_plataforma.py (cap. 13)
-├── panel.py                 (cap. 12)
-├── main.py                  (cap. 18)
-├── Dockerfile, docker-compose.yml, requirements.txt, requirements-dev.txt (cap. 14)
-├── .env.example, .gitignore, .dockerignore, pytest.ini
+│   ├── __init__.py
+│   ├── arquitectura.py
+│   ├── firma.py
+│   ├── streaming.py
+│   ├── mercado.py
+│   ├── cartera.py
+│   ├── ordenes.py
+│   ├── reintentos.py
+│   ├── secretos.py
+│   ├── riesgo.py
+│   ├── almacen.py
+│   ├── observabilidad.py
+│   ├── conciliacion.py
+│   ├── parada.py
+│   └── aceptacion.py
+│
+├── tests/
+│   ├── test_plataforma.py
+│   └── test_revision_seguridad_riesgo.py
+│
+├── main.py
+├── panel.py
+│
+├── Dockerfile
+├── docker-compose.yml
+│
+├── requirements.txt
+├── requirements-dev.txt
+├── pytest.ini
+│
+├── .env.example
+├── .gitignore
+├── .dockerignore
+│
 └── README.md
 ```
 
-`main.py` ejecuta el bucle de simulación. Usa la cartera, el broker simulado, el motor de
-riesgo, la máquina de estados de las órdenes, el almacén SQLite, los logs y métricas y el
-control operativo. El resto de módulos (firma REST, streaming, normalización de mercado,
-reintentos, conciliación, aceptación) son ejemplos autocontenidos con sus propias pruebas
-o ejercicios; `main.py` no los invoca.
+### Relación entre los módulos y los capítulos
 
-## Inicio rápido (Python 3.12)
+| Módulo | Capítulo |
+|---|---:|
+| `arquitectura.py` | 1 |
+| `firma.py` | 2 |
+| `streaming.py` | 3 |
+| `mercado.py` | 4 |
+| `cartera.py` | 5 |
+| `ordenes.py` | 6 |
+| `reintentos.py` | 7 |
+| `secretos.py` | 8 |
+| `riesgo.py` | 9 |
+| `almacen.py` | 10 |
+| `observabilidad.py` | 11 |
+| `panel.py` | 12 |
+| `tests/` | 13 |
+| `Dockerfile` y `docker-compose.yml` | 14 |
+| `conciliacion.py` | 15 |
+| `parada.py` | 16 |
+| `aceptacion.py` | 17 |
+| `main.py` | 18 |
+
+## 3. Instalación local
+
+Clona el repositorio:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate            # Windows: .venv\Scripts\activate
-pip install -r requirements-dev.txt  # dependencias de ejecución + pytest
-
-pytest                               # 20 pruebas, sin red, unos segundos
-python main.py                       # ejecuta la simulación e imprime el patrimonio final
+git clone https://github.com/t3rm1nus/Construye-una-plataforma-de-trading-con-IA.git
+cd Construye-una-plataforma-de-trading-con-IA
 ```
 
-Para ver los resultados en el panel de control, da el mismo archivo de base de datos a
-los dos procesos:
+Crea un entorno virtual:
+
+**Windows (PowerShell):**
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+**Linux / macOS:**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Actualiza pip e instala las dependencias de desarrollo:
+
+```bash
+python -m pip install --upgrade pip
+pip install -r requirements-dev.txt
+```
+
+Este archivo instala las dependencias de ejecución y pytest.
+
+## 4. Ejecutar la simulación
+
+Con el entorno virtual activado:
+
+```bash
+python main.py
+```
+
+El programa ejecuta una simulación de 200 pasos con una semilla reproducible y muestra el patrimonio final y las métricas de ejecución.
+
+La simulación utiliza:
+
+- Una cartera inicial simulada.
+- Un broker simulado.
+- Un motor básico de gestión del riesgo.
+- Una máquina de estados para las órdenes.
+- Persistencia SQLite.
+- Registro de eventos y métricas.
+
+Por defecto, la base de datos se mantiene en memoria durante la ejecución. Para utilizar un archivo SQLite persistente, define la variable `RUTA_BD`.
+
+**Windows (PowerShell):**
+
+```powershell
+$env:RUTA_BD = "plataforma.db"
+python main.py
+```
+
+**Linux / macOS:**
 
 ```bash
 RUTA_BD=plataforma.db python main.py
+```
+
+Cada ejecución añade una nueva corrida a la base de datos. Los identificadores de las órdenes permiten distinguir las diferentes ejecuciones.
+
+## 5. Panel de control
+
+El panel está implementado con Streamlit y proporciona una vista de solo lectura de las órdenes almacenadas en SQLite.
+
+Para iniciarlo, instala primero las dependencias y configura la misma ruta de base de datos que utiliza la simulación.
+
+**Windows (PowerShell):**
+
+```powershell
+$env:RUTA_BD = "plataforma.db"
+streamlit run panel.py
+```
+
+**Linux / macOS:**
+
+```bash
 RUTA_BD=plataforma.db streamlit run panel.py
 ```
 
-Cada ejecución de `main.py` añade una nueva corrida (sus órdenes se identifican como
-`corrida<marca>-<paso>`) a la base de datos, de modo que puedes lanzarlo tantas veces
-como quieras sobre el mismo archivo. Las posiciones netas que devuelve `simular()` se
-reconstruyen a partir de todo el historial guardado en ese archivo.
+Abre en el navegador:
 
-## Docker
+```text
+http://localhost:8501
+```
+
+El panel permite consultar las órdenes recientes y las órdenes activas. No envía órdenes ni modifica el estado de la plataforma.
+
+## 6. Pruebas automatizadas
+
+La suite de pruebas está ubicada en `tests/` y se ejecuta mediante pytest.
+
+Actualmente contiene **25 pruebas**, distribuidas en dos archivos:
+
+| Archivo | Pruebas | Cobertura principal |
+|---|---:|---|
+| `tests/test_plataforma.py` | 20 | Cartera, broker simulado, órdenes, idempotencia, reintentos, riesgo, persistencia, streaming, conciliación, métricas y simulación. |
+| `tests/test_revision_seguridad_riesgo.py` | 5 | Límites de riesgo, ventas para reducir exposición, validación de exposición, filtrado de secretos y configuración del logger. |
+| **Total** | **25** | |
+
+Ejecuta toda la suite:
 
 ```bash
-cp .env.example .env                 # opcional: solo para inyectar claves del exchange
+python -m pytest -q
+```
+
+Para obtener un informe más detallado:
+
+```bash
+python -m pytest -v
+```
+
+La configuración de pytest está en `pytest.ini`. El archivo establece `tests/` como directorio de pruebas y añade la raíz del proyecto a la ruta de importación.
+
+## 7. Integración continua
+
+El repositorio incorpora un workflow de GitHub Actions:
+
+```text
+.github/workflows/tests.yml
+```
+
+El workflow se ejecuta automáticamente cuando se realiza:
+
+- Un `push` a `master` o `main`.
+- Un `pull_request` dirigido a `master` o `main`.
+- Una ejecución manual mediante `workflow_dispatch`.
+
+El entorno de integración utiliza:
+
+- Ubuntu Latest.
+- Python 3.12.
+- Dependencias de `requirements-dev.txt`.
+- Ejecución completa de pytest mediante `python -m pytest -q`.
+
+Puedes consultar las ejecuciones y sus resultados en:
+
+[GitHub Actions — Tests](https://github.com/t3rm1nus/Construye-una-plataforma-de-trading-con-IA/actions/workflows/tests.yml)
+
+## 8. Docker
+
+El proyecto incluye un `Dockerfile` y un archivo `docker-compose.yml`.
+
+Para iniciar los servicios:
+
+```bash
 docker compose up --build
 ```
 
-La simulación se ejecuta una vez en el servicio `plataforma` y escribe en el volumen
-compartido. El panel se publica solo en `http://127.0.0.1:8501` (vista de solo lectura
-de la misma base de datos). No abras ese puerto a Internet; usa un túnel o un proxy
-con autenticación.
+Se levantan dos servicios:
 
-## Dependencias
+**plataforma**
+- Construye la imagen.
+- Ejecuta `main.py`.
+- Utiliza un volumen compartido para almacenar la base de datos SQLite.
 
-`requirements.txt` fija las versiones exactas de las dependencias directas con las que se
-ejecutaron las pruebas (Python 3.12). Para una reproducibilidad estricta, fija también las
-dependencias transitivas (`pip freeze > requirements.lock`) y el digest de la imagen base
-en el Dockerfile. `ccxt` solo hace falta para los ejercicios con exchanges (capítulos 2 y 18).
+**panel**
+- Ejecuta Streamlit.
+- Lee la misma base de datos.
+- Publica el puerto `8501` únicamente en la interfaz local `127.0.0.1`.
+- Proporciona una vista de solo lectura.
 
-## Cómo leer el código
+Para detener los servicios:
 
-Los nombres de archivos, clases, funciones y variables están en español, igual que los
-comentarios, las cadenas de documentación y los mensajes. Se mantienen unos pocos
-términos de mercado que se usan tal cual en inglés y que el libro explica: `bid` y `ask`
-(precios de oferta y demanda), `broker`, `drawdown`, `equity`, `ts_ms` (marca temporal en
-milisegundos) y `p95` (percentil 95).
+```bash
+docker compose down
+```
 
-## Derechos
-
-© 2026 Juan Antonio Charneco. Todos los derechos reservados. Consulta el libro para ver las
-condiciones de uso.
+Para detener
